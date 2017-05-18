@@ -7,10 +7,10 @@ spring:
     proxy-target-class: true
 
 server:
-  port: 8083
+  port: ${webportalPort}
   contextPath: ${contextPath}
   session:
-    timeout: 180000
+    timeout: 1800000
 
 security:
   user:
@@ -19,12 +19,12 @@ security:
     client:
       accessTokenUri: ${authRootUrl}/tr/oauth/token
       userAuthorizationUri: ${authRootUrl}/tr/oauth/authorize
-      clientId: trclient
-      clientSecret: trclientpassword
+      clientId: ${oauthClientId}
+      clientSecret: ${oauthClientSecret}
       access-token-validity-seconds: 1800000
       #added on 4/26/2017
       pre-established-redirect-uri: ${webPortalRootUrl}/traderocket/login
-      registered-redirect-uri: ${authRootUrl}/tr/login1
+      registered-redirect-uri: ${authRootUrl}/tr/login
       use-current-uri: false
     resource:
       jwt:
@@ -37,20 +37,18 @@ zuul:
   routes:
     resource:
       path: /resource/**
-      url: http://localhost:9081/tr/api/businessservice/email
+      url: ${businessServiceBaseUrl}/tr/api/businessservice/email
     users:
       path: /users/**
       url: http://localhost:9999/tr/api/accesscontrolservice/users
     links:
       path: /links/**
-      url: http://localhost:9081/tr/api/businessservice/links
+      url: ${businessServiceBaseUrl}/tr/api/businessservice/links
     user:
       path: /user/**
-      url: http://localhost:9080/tr/user
+      url: ${authRootUrl}/tr/user
     programs:
       path: /programs/**
-      #url: http://localhost:1880/getFlowsWithStart
-      #url: http://localhost:1880
       url: ${noderedRootUrl}
     #oauth:
       #path: /oauth/token/**
@@ -65,7 +63,7 @@ zuul:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://user:password@localhost:8761/eureka/
+      defaultZone: ${registryServerBaseUrl}/eureka/
 
 logging:
   level:
